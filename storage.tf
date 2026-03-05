@@ -1,8 +1,8 @@
 resource "aws_s3_bucket" "teacher_bucket" {
-  bucket = "teacher-lucascosm3-bucket-dev"
+  bucket = "teacher-lucascosm3-bucket-${var.environment}"
 
   tags = {
-    Name        = "teacher-lucascosm3-bucket"
-    Environment = "Dev"
+    Name        = "teacher-lucascosm3-bucket-${var.environment}"
+    Environment = var.environment
   }
 }
