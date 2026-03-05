@@ -13,8 +13,8 @@ provider "aws" {
   region = "us-east-1"
   default_tags {
     tags = {
-      owner      = "lucascosm3"
-      managed-by = "iac"
+      Owner      = "lucascosm3"
+      Managed-By = "iac"
     }
   }
 }

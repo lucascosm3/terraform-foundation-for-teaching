@@ -4,7 +4,5 @@ resource "aws_s3_bucket" "teacher_bucket" {
   tags = {
     Name        = "terraform-foundation-for-teaching-${var.environment}"
     Environment = var.environment
-    Managed-By  = "iac"
-    Owner       = var.owner
   }
 }
