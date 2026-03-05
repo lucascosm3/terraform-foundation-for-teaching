@@ -1,8 +1,10 @@
 resource "aws_s3_bucket" "teacher_bucket" {
-  bucket = "teacher-lucascosm3-bucket-${var.environment}"
+  bucket = "terraform-foundation-for-teaching-${var.environment}"
 
   tags = {
-    Name        = "teacher-lucascosm3-bucket-${var.environment}"
+    Name        = "terraform-foundation-for-teaching-${var.environment}"
     Environment = var.environment
+    Managed-By  = "iac"
+    Owner       = var.owner
   }
 }
