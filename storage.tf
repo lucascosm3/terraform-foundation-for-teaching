@@ -4,7 +4,8 @@ resource "aws_s3_bucket" "terraform_state_bucket" {
   tags = {
     Name        = "terraform-state-${var.environment}"
     Environment = var.environment
-    AccountID   = var.account_id
+    AccountID   = var.account-id
+    Managed-by  = var.managed-by
   }
 }
 
