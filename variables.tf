@@ -3,12 +3,12 @@ variable "environment" {
   description = "Environment of the resources"
 }
 
-variable "account_id" {
+variable "account-id" {
   type        = string
   description = "AWS Account ID"
 }
 
-variable "managed_by" {
+variable "managed-by" {
   type        = string
   description = "Who is managing the resources"
 }
