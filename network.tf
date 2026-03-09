@@ -11,12 +11,6 @@ resource "aws_internet_gateway" "igw_np" {
   tags = local.common_tags
 }
 
-# Internet Gateway Attachment
-resource "aws_internet_gateway_attachment" "igw_np_attachment" {
-  internet_gateway_id = aws_internet_gateway.igw_np.id
-  vpc_id              = aws_vpc.vpc_network_np.id
-}
-
 # Subnet
 resource "aws_subnet" "public_np" {
   vpc_id            = aws_vpc.vpc_network_np.id
