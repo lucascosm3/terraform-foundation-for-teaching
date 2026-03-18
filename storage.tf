@@ -4,8 +4,8 @@ import {
 }
 
 moved {
-    from = module.s3_bucket
-    to   = module.s3_bucket_state
+  from = module.s3_bucket
+  to   = module.s3_bucket_state
 }
 
 
