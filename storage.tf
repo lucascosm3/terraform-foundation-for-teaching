@@ -1,7 +1,7 @@
 import {
   to = aws_s3_bucket.s3_bucket
   identity = {
-    bucket = "terraform-state-for-teaching-${var.environment}"
+    bucket = "terraform-state-for-teaching-np"
   }
 }
 
