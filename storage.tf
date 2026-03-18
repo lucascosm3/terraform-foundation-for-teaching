@@ -9,11 +9,4 @@ module "s3_bucket" {
   versioning = {
     enabled = true
   }
-  tags = {
-    Name        = "terraform-state-${var.environment}"
-    Environment = var.environment
-    AccountID   = var.account-id
-    Managed-by  = var.managed-by
-  
-}
 }
