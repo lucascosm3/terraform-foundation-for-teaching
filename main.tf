@@ -26,3 +26,8 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "6.6.0"
 }
+
+module "s3-bucket" {
+source  = "terraform-aws-modules/s3-bucket/aws"
+version = "5.10.0"
+}
