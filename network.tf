@@ -40,7 +40,7 @@ module "vpc_np_module_remote_aws" {
   enable_vpn_gateway = false
 
   tags = {
-    managed-by = "${var.managed-by}"
+    managed-by  = "${var.managed-by}"
     environment = "${var.environment}"
   }
 }
