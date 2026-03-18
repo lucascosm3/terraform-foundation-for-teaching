@@ -1,15 +1,3 @@
-import {
-  to = module.s3_bucket_state_2.aws_s3_bucket.this[0]
-  id = "terraform-20260318140347320800000001"
-}
-
-moved {
-  from = module.s3_bucket
-  to   = module.s3_bucket_state
-}
-
-
-
 module "s3_bucket_state" {
   source = "terraform-aws-modules/s3-bucket/aws"
 
