@@ -1,5 +1,5 @@
 import {
-  to = aws_s3_bucket.s3_bucket.this[0]
+  to = module.s3_bucket.aws_s3_bucket.this[0]
   id = "terraform-state-for-teaching-np"
 }
 
