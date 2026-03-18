@@ -28,6 +28,7 @@ module "vpc_network_prod" {
 
 module "vpc_np_module_remote_aws" {
   source = "terraform-aws-modules/vpc/aws"
+  
 
   name = "vpc-np-module-remote-aws-${var.environment}"
   cidr = "10.0.0.0/16"
