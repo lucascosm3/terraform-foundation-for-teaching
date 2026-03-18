@@ -6,7 +6,7 @@ variable "vpc_name" {
 variable "vpc_cidr" {
   description = "CIDR block for the VPC"
   type        = string
-  
+
   # Validation of Variables
   validation {
     condition     = can(cidrnetmask(var.vpc_cidr))
