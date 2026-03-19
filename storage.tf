@@ -29,7 +29,7 @@ module "s3_bucket_script_instance" {
 resource "aws_s3_object" "setup-ec2-sh" {
   bucket     = "terraform-script-instance-for-teaching-${var.environment}"
   key        = "setup-ec2.sh"
-  source     = "/home/lucas/Workplaces/Labs/scripts/setup-ec2.sh"
-  etag       = filemd5("/home/lucas/Workplaces/Labs/scripts/setup-ec2.sh")
+  source     = "${path.module}/scripts/setup-ec2.sh"
+  etag       = filemd5("${path.module}/scripts/setup-ec2.sh")
   depends_on = [module.s3_bucket_script_instance]
 }
