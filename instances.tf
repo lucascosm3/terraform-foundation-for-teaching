@@ -17,8 +17,9 @@ data "aws_ami" "ubuntu" {
 
 # EC2 instance to test the script instance
 resource "aws_instance" "web" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
+  ami                  = data.aws_ami.ubuntu.id
+  instance_type        = "t3.micro"
+  iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 
   user_data = <<EOF
     #!/bin/bash
