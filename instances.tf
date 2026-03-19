@@ -21,13 +21,13 @@ resource "aws_instance" "web" {
   instance_type = "t3.micro"
 
   user_data = <<EOF
-#!/bin/bash
-aws s3 cp s3://${module.s3_bucket_script_instance.s3_bucket_id}/setup-ec2.sh /tmp/setup-ec2.sh
-chmod +x /tmp/setup-ec2.sh
-/tmp/setup-ec2.sh
+    #!/bin/bash
+    aws s3 cp s3://${module.s3_bucket_script_instance.s3_bucket_id}/setup-ec2.sh /tmp/setup-ec2.sh
+    chmod +x /tmp/setup-ec2.sh
+    /tmp/setup-ec2.sh
 EOF
 
-depends_on = [ aws_s3_object.setup-ec2-sh ]
+  depends_on = [aws_s3_object.setup-ec2-sh]
   tags = {
     Name = "HelloWorld"
   }
