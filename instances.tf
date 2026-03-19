@@ -23,6 +23,9 @@ resource "aws_instance" "web" {
 
   user_data = <<EOF
 #!/bin/bash
+apt-get update -y
+apt-get install -y awscli
+
 aws s3 cp s3://${module.s3_bucket_script_instance.s3_bucket_id}/setup-ec2.sh /tmp/setup-ec2.sh
 chmod +x /tmp/setup-ec2.sh
 /tmp/setup-ec2.sh
