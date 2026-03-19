@@ -28,7 +28,36 @@ resource "aws_instance" "web" {
 EOF
 
   depends_on = [aws_s3_object.setup-ec2-sh]
+
+  vpc_security_group_ids = [aws_security_group.web_sg.id]
+
   tags = {
     Name = "HelloWorld"
+  }
+}
+
+# Security Group to allow HTTP traffic
+resource "aws_security_group" "web_sg" {
+  name        = "web-sg-${var.environment}"
+  description = "Allow HTTP inbound traffic"
+
+  ingress {
+    description = "HTTP from anywhere"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Good practice to leave egress open to allow returning traffic / updates
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "web-sg"
   }
 }
