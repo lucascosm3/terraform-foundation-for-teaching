@@ -22,10 +22,10 @@ resource "aws_instance" "web" {
   iam_instance_profile = aws_iam_instance_profile.ec2_profile.name
 
   user_data = <<EOF
-    #!/bin/bash
-    aws s3 cp s3://${module.s3_bucket_script_instance.s3_bucket_id}/setup-ec2.sh /tmp/setup-ec2.sh
-    chmod +x /tmp/setup-ec2.sh
-    /tmp/setup-ec2.sh
+#!/bin/bash
+aws s3 cp s3://${module.s3_bucket_script_instance.s3_bucket_id}/setup-ec2.sh /tmp/setup-ec2.sh
+chmod +x /tmp/setup-ec2.sh
+/tmp/setup-ec2.sh
 EOF
 
   depends_on = [aws_s3_object.setup-ec2-sh]
