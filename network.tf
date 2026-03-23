@@ -1,3 +1,4 @@
+# VPC with module local
 module "vpc_network_np" {
   source = "./modules/vpc"
 
@@ -12,6 +13,7 @@ module "vpc_network_np" {
   }
 }
 
+# VPC with module remote AWS
 module "vpc_np_module_remote_aws" {
   source = "terraform-aws-modules/vpc/aws"
 
