@@ -84,38 +84,33 @@ graph TD
     A[Push/Merge] --> B(Validate)
     B --> C(Plan)
     C -.->|Opção Manual| D[Apply]
-    C -.->|Opção Manual| E[Destroy]
 ```
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-*   `/backend`: Configurações de state remoto (`np.hcl`, `prod.hcl`).
+*   `/backend**: Configurações de state remoto (`np.hcl`, `prod.hcl`).
 *   `.github/workflows`: 
-    *   `ci-cd-np.yml`: Pipeline completa para o ambiente de Desenvolvimento.
-    *   `ci-cd-prod.yml`: Pipeline completa para o ambiente de Produção.
-*   `network.tf`, `storage.tf`: Definições de infraestrutura.
-*   `main.tf`: Configurações globais e versões.
+    *   `ci-cd-np.yml`: Pipeline integrada para ambiente de Desenvolvimento.
+    *   `ci-cd-prod.yml`: Pipeline integrada para ambiente de Produção.
+    *   `cleanup.yml`: Workflow administrativo para limpeza rápida.
+*   `network.tf`, `storage.tf`: Infraestrutura Cloud.
+*   `main.tf`: Configurações globais.
 
 ---
 
-## 🧹 Limpeza de Recursos
+## 🧹 Limpeza de Recursos (Rápida e Prática)
 
-Para evitar custos desnecessários na sua conta AWS:
+Para evitar os custos da AWS após concluir o laboratório, utilize o workflow dedicado de limpeza:
 
-1.  Acesse a aba **Actions**.
-2.  Selecione a execução mais recente da pipeline do ambiente que deseja limpar.
-3.  No grafo de execução, localize o job **Terraform Destroy** ao final do fluxo.
-4.  Clique em **Review deployments**, selecione o ambiente de limpeza (`-destroy`) e aprove.
-
-### ⚡ Limpeza Administrativa (Rápida)
-
-Para casos onde você deseja destruir a infraestrutura sem passar pela pipeline de CI/CD:
-
-1.  Acesse a aba **Actions**.
+1.  Acesse a aba **Actions** no GitHub.
 2.  Selecione o workflow **Admin - Quick Cleanup**.
-3.  Clique em **Run workflow**, escolha o ambiente e confirme.
+3.  Clique em **Run workflow**.
+4.  Escolha o ambiente (`dev` ou `prod`) e confirme.
+
+> [!TIP]
+> Isolamos a limpeza em um arquivo separado por segurança e praticidade, permitindo que você destrua o ambiente a qualquer momento sem precisar rodar a pipeline de deploy.
 
 ---
 
