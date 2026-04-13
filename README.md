@@ -50,59 +50,67 @@ terraform plan -var-file="dev.tfvars"
 terraform apply -var-file="dev.tfvars"
 ```
 
-### 2. Etapa Automatizada (O "Plus" com Pipeline)
+### 2. Etapa Automatizada (O "Plus" com Pipelines)
 
-Após entender a mecânica, introduzimos o **GitHub Actions**. Agora, o trabalho manual é substituído por uma automação acionada por eventos do Git:
+Após entender a mecânica, introduzimos o **GitHub Actions**. O trabalho agora é consolidado em pipelines que cuidam de todo o ciclo de vida por ambiente:
 
-*   **Ambiente Dev (NP)**: Acionado automaticamente ao fazer push para a branch `dev`.
-*   **Ambiente Prod**: Acionado automaticamente ao fazer push ou merge para a branch `main`.
+*   **🔍 Validação e Plano**: Automáticos a cada push, garantindo feedback imediato.
+*   **🚀 Opções Manuais**: Após o plano, você decide o próximo passo: **Aplicar** as mudanças ou **Destruir** os recursos para limpeza.
 
-**Vantagens da Pipeline:**
-- **Consistência**: O plano gerado no `plan` é exatamente o que é aplicado no `apply` via artefatos.
-- **Segurança**: Credenciais AWS ficam protegidas nos Secrets do GitHub.
-- **Histórico**: Todo o log de alteração da infraestrutura fica visível no histórico do workflow.
+---
+
+## ⚙️ Configuração Necessária no GitHub
+
+Para que as paradas manuais funcionem corretamente, você deve configurar os **Environments** no seu repositório:
+
+1.  Acesse **Settings** > **Environments**.
+2.  Crie os seguintes ambientes:
+    *   `dev` e `dev-destroy` (ambiente Non-Prod).
+    *   `prod` e `prod-destroy` (ambiente Produção).
+3.  Em cada ambiente, ative a opção **Required reviewers**.
 
 ---
 
 ## 🌳 Estratégia de Branching (Gitflow)
 
-Para organizar o desenvolvimento e garantir a estabilidade da infraestrutura, utilizamos um fluxo de trabalho baseado em branches:
-
-1.  **Feature Branches** (`feature/nome-da-mudança`): Onde as novas implementações começam. 
-2.  **Branch `dev`**: 
-    *   Representa o ambiente de **Non-Prod (Desenvolvimento)**.
-    *   **Trigger**: No `push` ou `merge`, a pipeline de NP é acionada.
-3.  **Branch `main`**: 
-    *   Representa o ambiente de **Produção**.
-    *   **Trigger**: Apenas merges aprovados aqui disparam a pipeline de Produção.
+1.  **Feature Branches**: Onde as novas implementações começam. 
+2.  **Branch `dev`**: Representa o ambiente de **Desenvolvimento**. O `push` aqui dispara a pipeline de NP.
+3.  **Branch `main`**: Representa o ambiente de **Produção**. O `merge` aqui dispara a pipeline de Produção.
 
 ### Fluxo de Trabalho (Workflow):
-
+ 
 ```mermaid
-graph LR
-    A[Feature Branch] -->|Push/Merge| B(Branch dev)
-    B -->|Plan/Validate| B
-    B -.->|Manual Approval/Apply| C[Ambiente NP]
-    B -->|Merge main| D(Branch main)
-    D -->|Plan/Validate| D
-    D -.->|Manual Approval/Apply| E[Ambiente PROD]
+graph TD
+    A[Push/Merge] --> B(Validate)
+    B --> C(Plan)
+    C -.->|Opção Manual| D[Apply]
 ```
-
-*   **A Pipeline é a Autoridade**: A validação (`validate`) e o planejamento (`plan`) da infraestrutura são realizados automaticamente pela pipeline ao detectar um push ou merge.
-*   **Apply Manual para Controle Total**: O `terraform apply` **não acontece automaticamente**. Ele exige uma aprovação manual (clique no botão de aprovação no GitHub) para garantir que você tenha controle total sobre o que sobe para os ambientes de NP e PROD.
-*   **Merge Request como Garantia**: O fluxo de trabalho deve sempre passar por um Merge Request para revisão entre pares, garantindo a integridade do estado (state).
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-*   `/backend`: Configurações de state remoto para diferentes ambientes (`np.hcl`, `prod.hcl`).
-*   `.github/workflows`: Definições das pipelines de **CI/CD** (`ci-cd-np.yml` e `ci-cd-prod.yml`).
-    *   **CI (Integração Contínua)**: Validação e Plano executados automaticamente.
-    *   **CD (Entrega Contínua)**: Aplicação **manual** da infraestrutura após aprovação no ambiente correspondente.
-*   `network.tf`: Definição da malha de rede.
-*   `storage.tf`: Definição do bucket de estado/armazenamento.
-*   `main.tf`: Configurações globais do provider e versões.
+*   `/backend**: Configurações de state remoto (`np.hcl`, `prod.hcl`).
+*   `.github/workflows`: 
+    *   `ci-cd-np.yml`: Pipeline integrada para ambiente de Desenvolvimento.
+    *   `ci-cd-prod.yml`: Pipeline integrada para ambiente de Produção.
+    *   `cleanup.yml`: Workflow administrativo para limpeza rápida.
+*   `network.tf`, `storage.tf`: Infraestrutura Cloud.
+*   `main.tf`: Configurações globais.
+
+---
+
+## 🧹 Limpeza de Recursos (Rápida e Prática)
+
+Para evitar os custos da AWS após concluir o laboratório, utilize o workflow dedicado de limpeza:
+
+1.  Acesse a aba **Actions** no GitHub.
+2.  Selecione o workflow **Admin - Quick Cleanup**.
+3.  Clique em **Run workflow**.
+4.  Escolha o ambiente (`dev` ou `prod`) e confirme.
+
+> [!TIP]
+> Isolamos a limpeza em um arquivo separado por segurança e praticidade, permitindo que você destrua o ambiente a qualquer momento sem precisar rodar a pipeline de deploy.
 
 ---
 

@@ -1,3 +1,3 @@
-bucket = "terraform-state-for-teaching"
-key    = "terraform-foundation-for-teaching-prod/terraform.tfstate"
+bucket = "terraform-state-091708608334"
+key    = "terraform-state-prod/terraform.tfstate"
 region = "us-east-1"

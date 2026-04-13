@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - dev
-
   workflow_dispatch:
 
 jobs:
@@ -30,8 +29,7 @@ jobs:
       run: terraform init -backend-config=backend/np.hcl -upgrade
 
     - name: Terraform Format Check
-      run: |
-        terraform fmt -check || echo "Dica: rode 'terraform fmt' localmente para corrigir o formato"
+      run: terraform fmt -check || echo "Dica rode 'terraform fmt' localmente"
 
     - name: Terraform Validate
       run: terraform validate
@@ -67,14 +65,11 @@ jobs:
         name: tfplan-np
         path: tfplan
 
-  apply:
+  a_apply:
     name: 'Terraform Apply - NP'
     runs-on: ubuntu-latest
     needs: [plan]
-    # O uso de 'environment' permite configurar aprovações manuais (reviewers) no GitHub,
-    # tornando este job manual e controlado.
     environment: dev
-    # Só aciona o apply se for direto no branch dev, impedindo builds de PR de aplicarem na AWS
     if: github.ref == 'refs/heads/dev' && github.event_name != 'pull_request'
 
     steps:
@@ -101,3 +96,4 @@ jobs:
 
     - name: Terraform Apply
       run: terraform apply tfplan
+
