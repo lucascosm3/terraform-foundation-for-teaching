@@ -78,9 +78,9 @@ Para que as paradas manuais funcionem corretamente, você deve configurar os **E
 3.  **Branch `main`**: Representa o ambiente de **Produção**. O `merge` aqui dispara a pipeline de Produção.
 
 ### Fluxo de Trabalho (Workflow):
-
+ 
 ```mermaid
-graph LR
+graph TD
     A[Push/Merge] --> B(Validate)
     B --> C(Plan)
     C -.->|Opção Manual| D[Apply]

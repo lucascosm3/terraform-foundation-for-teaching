@@ -65,7 +65,7 @@ jobs:
         name: tfplan-np
         path: tfplan
 
-  apply:
+  a_apply:
     name: 'Terraform Apply - NP'
     runs-on: ubuntu-latest
     needs: [plan]
@@ -97,7 +97,7 @@ jobs:
     - name: Terraform Apply
       run: terraform apply tfplan
 
-  destroy:
+  b_destroy:
     name: 'Terraform Destroy - NP'
     runs-on: ubuntu-latest
     needs: [plan]
