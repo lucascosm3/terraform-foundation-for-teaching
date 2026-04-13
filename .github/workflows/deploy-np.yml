@@ -11,7 +11,7 @@ on:
 
 jobs:
   validate:
-    name: 'Terraform Validate & Format - NP'
+    name: 'Terraform Validate - NP'
     runs-on: ubuntu-latest
 
     steps:
