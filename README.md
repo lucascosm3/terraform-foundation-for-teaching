@@ -86,8 +86,8 @@ graph LR
     D -->|Automatic Apply| E[Ambiente PROD]
 ```
 
-*   **Validação em PRs**: Ao abrir um Pull Request para `dev` ou `main`, a pipeline executa apenas o `terraform plan`. Isso permite que você revise o que será alterado antes de confirmar o merge.
-*   **Deploy Automático**: O `terraform apply` só ocorre após o merge final na branch correspondente.
+*   **Deploy Direto**: Ao realizar um `push` ou `merge` para as branches `dev` ou `main`, a pipeline correspondente é acionada imediatamente, executando todo o ciclo (Validate, Plan e Apply).
+*   **Atenção**: Como as pipelines não rodam mais em Pull Requests, é recomendável rodar o `terraform plan` localmente antes de realizar o push para garantir que não haverá erros na pipeline.
 
 ---
 
