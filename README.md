@@ -64,10 +64,39 @@ Após entender a mecânica, introduzimos o **GitHub Actions**. Agora, o trabalho
 
 ---
 
+## 🌳 Estratégia de Branching (Gitflow)
+
+Para organizar o desenvolvimento e garantir a estabilidade da infraestrutura, utilizamos um fluxo de trabalho baseado em branches:
+
+1.  **Feature Branches** (`feature/nome-da-mudança`): Onde as novas implementações começam. 
+2.  **Branch `dev`**: 
+    *   Representa o ambiente de **Non-Prod (Desenvolvimento)**.
+    *   **Trigger**: No `push` ou `merge`, a pipeline de NP é acionada.
+3.  **Branch `main`**: 
+    *   Representa o ambiente de **Produção**.
+    *   **Trigger**: Apenas merges aprovados aqui disparam a pipeline de Produção.
+
+### Fluxo de Trabalho (Workflow):
+
+```mermaid
+graph LR
+    A[Feature Branch] -->|Pull Request| B(Branch dev)
+    B -->|Automatic Apply| C[Ambiente NP]
+    B -->|Pull Request| D(Branch main)
+    D -->|Automatic Apply| E[Ambiente PROD]
+```
+
+*   **A Pipeline é a Autoridade**: A validação (`validate`) e o planejamento (`plan`) da infraestrutura são realizados automaticamente pela pipeline. **Não é necessário e nem recomendado** executar comandos do Terraform localmente para o deploy.
+*   **Merge Request como Garantia**: O fluxo de trabalho deve sempre passar por um Merge Request. Ao realizar o merge para `dev` ou `main`, a pipeline assume a responsabilidade de garantir que o código aprovado seja exatamente o que será provisionado, mantendo a integridade do ambiente e do estado (state).
+
+---
+
 ## 📁 Estrutura do Projeto
 
 *   `/backend`: Configurações de state remoto para diferentes ambientes (`np.hcl`, `prod.hcl`).
-*   `.github/workflows`: Definições das pipelines de automatização.
+*   `.github/workflows`: Definições das pipelines de **CI/CD** (`ci-cd-np.yml` e `ci-cd-prod.yml`).
+    *   **CI (Integração Contínua)**: Validação e Plano executados em Pull Requests.
+    *   **CD (Entrega Contínua)**: Aplicação automática da infraestrutura após o merge.
 *   `network.tf`: Definição da malha de rede.
 *   `storage.tf`: Definição do bucket de estado/armazenamento.
 *   `main.tf`: Configurações globais do provider e versões.
