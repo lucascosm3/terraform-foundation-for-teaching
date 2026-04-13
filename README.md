@@ -2,72 +2,81 @@
 
 Bem-vindo ao repositório **Terraform Foundation for Teaching**! 🚀
 
-Este projeto tem como objetivo fortalecer a fundação e o ensino de infraestrutura como código (IaC) utilizando o **Terraform**. Ele foi desenhado para ser um ponto de partida simples e didático para o aprendizado e criação de recursos na AWS.
+Este projeto foi desenvolvido como um laboratório prático para ensinar os fundamentos de **Infraestrutura como Código (IaC)** utilizando o **Terraform**. A jornada do projeto leva o aluno desde os comandos manuais básicos até a automação completa com pipelines de CI/CD.
+
+---
+
+## 📖 Objetivo Pedagógico
+
+O projeto está estruturado para demonstrar três pilares principais:
+1.  **Fundamentos do Terraform**: Provider, Resources, Variables e Locals.
+2.  **Modularização e Reuso**: Utilização de módulos oficiais da comunidade (VPC e S3).
+3.  **Automação (O "Plus")**: Substituição do trabalho manual por pipelines automatizadas no GitHub Actions.
 
 ---
 
 ## 🛠️ Tecnologias Utilizadas
 
 *   **Terraform** (>= 1.0) 🏗️
-*   **AWS Provider** (v6.34.0) ☁️
+*   **AWS Provider** (~> 6.39) ☁️
+*   **GitHub Actions** (CI/CD) ⚙️
 
 ---
 
-## 📦 O que já foi construído?
+## 📦 Infraestrutura Provisionada
 
-Atualmente, o projeto provisiona e utiliza os seguintes recursos e conceitos:
+Atualmente, o projeto utiliza módulos oficiais para garantir as melhores práticas:
 
-*   **☁️ VPC (Rede):** 
-    *   Criação de redes com um módulo local (`./modules/vpc`).
-    *   Uso do módulo oficial da AWS (`terraform-aws-modules/vpc/aws`) para VPCs de ambientes (Non-Prod/Prod), incluindo sub-redes públicas e privadas.
-*   **🪣 Armazenamento (S3):** 
-    *   Módulo oficial da AWS (`terraform-aws-modules/s3-bucket/aws`) para provisionar um S3 Bucket com controles de acesso (Ownership) e versionamento ativado.
-*   **🔐 Gestão de Estado Remoto:** 
-    *   Configuração do Terraform Backend (`backend "s3"`) garantindo que o `terraform.tfstate` fique armazenado de forma segura na nuvem.
-*   **🌍 Múltiplos Ambientes:** 
-    *   Estrutura preparada para trabalhar com diversos ambientes usando variáveis e arquivos `.tfvars` (ex: `dev.tfvars`, `prod.tfvars`).
-*   **🏷️ Padronização de Tags:** 
-    *   Uso de atributos `locals` e `default_tags` no provider da AWS para facilitar a gestão da infraestrutura.
-
----
-
-## 📋 Pré-requisitos
-
-Antes de começar, certifique-se de ter as seguintes ferramentas instaladas:
-
-*   [Terraform](https://developer.hashicorp.com/terraform/downloads) 
-*   [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) configurado com suas credenciais.
+*   **☁️ VPC (Rede)**: Provisionada via `terraform-aws-modules/vpc/aws`. Inclui sub-redes públicas/privadas e tags padronizadas.
+*   **🪣 Armazenamento (S3)**: Provisionado via `terraform-aws-modules/s3-bucket/aws` para armazenar o estado remoto e/ou arquivos da aplicação, com versionamento ativado.
+*   **🔐 Estado Remoto**: Configurado para armazenar o `terraform.tfstate` no S3, permitindo o trabalho colaborativo e seguro.
 
 ---
 
 ## 🚀 Como Utilizar
 
-1.  **Clone o repositório:**
-    ```bash
-    git clone https://github.com/seu-usuario/terraform-foundation-for-teaching.git
-    cd terraform-foundation-for-teaching
-    ```
+### 1. Etapa Manual (Aprendizado)
 
-2.  **Inicialize o Terraform:**
-    Este comando faz o download dos providers e inicializa o backend S3.
-    ```bash
-    terraform init
-    ```
+Para aprender como o Terraform funciona "debaixo do capô", os alunos começam executando os comandos localmente:
 
-3.  **Verifique as mudanças (Plan) para um ambiente específico:**
-    Exemplo para o ambiente de desenvolvimento:
-    ```bash
-    terraform plan -var-file="dev.tfvars"
-    ```
+```bash
+# Inicialize o backend e baixe os providers
+terraform init -backend-config=backend/np.hcl
 
-4.  **Aplique a infraestrutura:**
-    Crie os recursos na AWS (requer confirmação `yes`).
-    ```bash
-    terraform apply -var-file="dev.tfvars"
-    ```
+# Veja o plano de execução (Dry-run)
+terraform plan -var-file="dev.tfvars"
+
+# Aplique as mudanças na AWS
+terraform apply -var-file="dev.tfvars"
+```
+
+### 2. Etapa Automatizada (O "Plus" com Pipeline)
+
+Após entender a mecânica, introduzimos o **GitHub Actions**. Agora, o trabalho manual é substituído por uma automação acionada por eventos do Git:
+
+*   **Ambiente Dev (NP)**: Acionado automaticamente ao fazer push para a branch `dev`.
+*   **Ambiente Prod**: Acionado automaticamente ao fazer push ou merge para a branch `main`.
+
+**Vantagens da Pipeline:**
+- **Consistência**: O plano gerado no `plan` é exatamente o que é aplicado no `apply` via artefatos.
+- **Segurança**: Credenciais AWS ficam protegidas nos Secrets do GitHub.
+- **Histórico**: Todo o log de alteração da infraestrutura fica visível no histórico do workflow.
+
+---
+
+## 📁 Estrutura do Projeto
+
+*   `/backend`: Configurações de state remoto para diferentes ambientes (`np.hcl`, `prod.hcl`).
+*   `.github/workflows`: Definições das pipelines de automatização.
+*   `network.tf`: Definição da malha de rede.
+*   `storage.tf`: Definição do bucket de estado/armazenamento.
+*   `main.tf`: Configurações globais do provider e versões.
 
 ---
 
 ## 📜 Licença
 
 Consulte o arquivo [LICENSE](./LICENSE) para mais detalhes.
+
+---
+*Este repositório é mantido para fins didáticos por [lucascosm3](https://github.com/lucascosm3).*
