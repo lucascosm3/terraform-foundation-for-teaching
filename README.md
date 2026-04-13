@@ -112,9 +112,9 @@ Para evitar custos desnecessários na sua conta AWS após concluir o laboratóri
 
 1.  Acesse a aba **Actions** no seu repositório GitHub.
 2.  Selecione a execução mais recente da pipeline correspondente (`Terraform CI/CD - NP` ou `PROD`).
-3.  No grafo de execução, você verá um job chamado **Terraform Destroy** aguardando aprovação.
-4.  Clique em **Review deployments** e aprove para executar a limpeza.
-5.  **Atenção**: Este job é opcional e manual. Ele garante que os recursos sejam removidos apenas quando você desejar encerrar o laboratório.
+3.  No grafo de execução, você verá um job chamado **Terraform Destroy** ao final do fluxo.
+4.  Clique em **Review deployments** e aprove o ambiente correspondente (`dev-destroy` ou `prod-destroy`).
+5.  **Atenção**: Este job é opcional e manual. Ele utiliza um ambiente separado para garantir que a aprovação do deploy (Apply) não acione a destruição acidentalmente.
 
 ---
 
