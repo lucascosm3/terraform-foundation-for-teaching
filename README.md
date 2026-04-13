@@ -109,6 +109,14 @@ Para evitar custos desnecessários na sua conta AWS:
 3.  No grafo de execução, localize o job **Terraform Destroy** ao final do fluxo.
 4.  Clique em **Review deployments**, selecione o ambiente de limpeza (`-destroy`) e aprove.
 
+### ⚡ Limpeza Administrativa (Rápida)
+
+Para casos onde você deseja destruir a infraestrutura sem passar pela pipeline de CI/CD:
+
+1.  Acesse a aba **Actions**.
+2.  Selecione o workflow **Admin - Quick Cleanup**.
+3.  Clique em **Run workflow**, escolha o ambiente e confirme.
+
 ---
 
 ## 📜 Licença
