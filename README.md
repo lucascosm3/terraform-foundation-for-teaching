@@ -80,14 +80,17 @@ Para organizar o desenvolvimento e garantir a estabilidade da infraestrutura, ut
 
 ```mermaid
 graph LR
-    A[Feature Branch] -->|Pull Request| B(Branch dev)
-    B -->|Automatic Apply| C[Ambiente NP]
-    B -->|Pull Request| D(Branch main)
-    D -->|Automatic Apply| E[Ambiente PROD]
+    A[Feature Branch] -->|Push/Merge| B(Branch dev)
+    B -->|Plan/Validate| B
+    B -.->|Manual Approval/Apply| C[Ambiente NP]
+    B -->|Merge main| D(Branch main)
+    D -->|Plan/Validate| D
+    D -.->|Manual Approval/Apply| E[Ambiente PROD]
 ```
 
-*   **A Pipeline é a Autoridade**: A validação (`validate`) e o planejamento (`plan`) da infraestrutura são realizados automaticamente pela pipeline. **Não é necessário e nem recomendado** executar comandos do Terraform localmente para o deploy.
-*   **Merge Request como Garantia**: O fluxo de trabalho deve sempre passar por um Merge Request. Ao realizar o merge para `dev` ou `main`, a pipeline assume a responsabilidade de garantir que o código aprovado seja exatamente o que será provisionado, mantendo a integridade do ambiente e do estado (state).
+*   **A Pipeline é a Autoridade**: A validação (`validate`) e o planejamento (`plan`) da infraestrutura são realizados automaticamente pela pipeline ao detectar um push ou merge.
+*   **Apply Manual para Controle Total**: O `terraform apply` **não acontece automaticamente**. Ele exige uma aprovação manual (clique no botão de aprovação no GitHub) para garantir que você tenha controle total sobre o que sobe para os ambientes de NP e PROD.
+*   **Merge Request como Garantia**: O fluxo de trabalho deve sempre passar por um Merge Request para revisão entre pares, garantindo a integridade do estado (state).
 
 ---
 
@@ -95,8 +98,8 @@ graph LR
 
 *   `/backend`: Configurações de state remoto para diferentes ambientes (`np.hcl`, `prod.hcl`).
 *   `.github/workflows`: Definições das pipelines de **CI/CD** (`ci-cd-np.yml` e `ci-cd-prod.yml`).
-    *   **CI (Integração Contínua)**: Validação e Plano executados em Pull Requests.
-    *   **CD (Entrega Contínua)**: Aplicação automática da infraestrutura após o merge.
+    *   **CI (Integração Contínua)**: Validação e Plano executados automaticamente.
+    *   **CD (Entrega Contínua)**: Aplicação **manual** da infraestrutura após aprovação no ambiente correspondente.
 *   `network.tf`: Definição da malha de rede.
 *   `storage.tf`: Definição do bucket de estado/armazenamento.
 *   `main.tf`: Configurações globais do provider e versões.

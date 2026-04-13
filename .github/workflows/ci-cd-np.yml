@@ -71,6 +71,8 @@ jobs:
     name: 'Terraform Apply - NP'
     runs-on: ubuntu-latest
     needs: [plan]
+    # O uso de 'environment' permite configurar aprovações manuais (reviewers) no GitHub,
+    # tornando este job manual e controlado.
     environment: dev
     # Só aciona o apply se for direto no branch dev, impedindo builds de PR de aplicarem na AWS
     if: github.ref == 'refs/heads/dev' && github.event_name != 'pull_request'
