@@ -50,23 +50,19 @@ terraform plan -var-file="dev.tfvars"
 terraform apply -var-file="dev.tfvars"
 ```
 
-### 2. Etapa Automatizada (O "Plus" com Pipeline)
+### 2. Etapa Automatizada (O "Plus" com Pipelines)
 
-Após entender a mecânica, introduzimos o **GitHub Actions**. Agora, o trabalho manual é substituído por uma automação acionada por eventos do Git:
+Após entender a mecânica, introduzimos o **GitHub Actions**. O trabalho agora é dividido em três responsabilidades claras:
 
-*   **Ambiente Dev (NP)**: Acionado automaticamente ao fazer push para a branch `dev`.
-*   **Ambiente Prod**: Acionado automaticamente ao fazer push ou merge para a branch `main`.
-
-**Vantagens da Pipeline:**
-- **Consistência**: O plano gerado no `plan` é exatamente o que é aplicado no `apply` via artefatos.
-- **Segurança**: Credenciais AWS ficam protegidas nos Secrets do GitHub.
-- **Histórico**: Todo o log de alteração da infraestrutura fica visível no histórico do workflow.
+*   **🔍 CI (Integração Contínua)**: Validação automática do código (`fmt`, `validate` e `plan`) a cada push.
+*   **🚀 CD (Entrega Contínua)**: Deploy manual (`apply`) através de um botão no GitHub, permitindo total controle sobre quando a infraestrutura muda.
+*   **🧹 Cleanup (Limpeza)**: Destruição manual e isolada dos recursos quando o laboratório termina.
 
 ---
 
 ## ⚙️ Configuração Necessária no GitHub
 
-Para que as aprovações manuais funcionem corretamente e o `apply/destroy` não executem sozinhos, você deve configurar os **Environments** no seu repositório:
+Para que as aprovações manuais funcionem corretamente e você tenha os botões de controle, configure os **Environments** no seu repositório:
 
 1.  Acesse **Settings** > **Environments**.
 2.  Crie os seguintes ambientes:
@@ -74,65 +70,47 @@ Para que as aprovações manuais funcionem corretamente e o `apply/destroy` não
     *   `prod` e `prod-destroy` (para o ambiente Produção).
 3.  Em cada ambiente, ative a opção **Required reviewers** e adicione os usuários aprovadores.
 
-> [!IMPORTANT]
-> Sem essa configuração, o GitHub executará os jobs automaticamente assim que o `plan` for concluído.
-
 ---
 
 ## 🌳 Estratégia de Branching (Gitflow)
 
-Para organizar o desenvolvimento e garantir a estabilidade da infraestrutura, utilizamos um fluxo de trabalho baseado em branches:
-
-1.  **Feature Branches** (`feature/nome-da-mudança`): Onde as novas implementações começam. 
-2.  **Branch `dev`**: 
-    *   Representa o ambiente de **Non-Prod (Desenvolvimento)**.
-    *   **Trigger**: No `push` ou `merge`, a pipeline de NP é acionada.
-3.  **Branch `main`**: 
-    *   Representa o ambiente de **Produção**.
-    *   **Trigger**: Apenas merges aprovados aqui disparam a pipeline de Produção.
+1.  **Feature Branches**: Onde as novas implementações começam. 
+2.  **Branch `dev`**: Representa o ambiente de **Desenvolvimento**. O `push` aqui dispara o **CI de NP**.
+3.  **Branch `main`**: Representa o ambiente de **Produção**. O `merge` aqui dispara o **CI de Produção**.
 
 ### Fluxo de Trabalho (Workflow):
 
 ```mermaid
-graph LR
-    A[Feature Branch] -->|Push/Merge| B(Branch dev)
-    B -->|Plan/Validate| B
-    B -.->|Manual Option: Apply| C[Ambiente NP]
-    B -.->|Manual Option: Destroy| F[Limpeza NP]
-    B -->|Merge main| D(Branch main)
-    D -->|Plan/Validate| D
-    D -.->|Manual Option: Apply| E[Ambiente PROD]
-    D -.->|Manual Option: Destroy| G[Limpeza PROD]
+graph TD
+    A[Push/Merge] --> B{Pipeline de CI}
+    B -->|Automático| C[Validate & Plan]
+    C --> D[Reviewer do Plano]
+    D --> E{Decisão do Aluno}
+    E -->|Manual: Deploy| F[Workflow de CD]
+    E -->|Manual: Limpar| G[Workflow de Destroy]
 ```
-
-*   **A Pipeline é a Autoridade**: A validação (`validate`) e o planejamento (`plan`) da infraestrutura são realizados automaticamente pela pipeline ao detectar um push ou merge.
-*   **Escolha sua Ação (Apply ou Destroy)**: Após o planejamento, você tem duas opções independentes e manuais. Você pode escolher **Aplicar** as mudanças ou **Destruir** o que já existe.
-*   **Apply Manual para Controle Total**: O `terraform apply` **não acontece automaticamente**. Ele exige uma aprovação manual (clique no botão de aprovação no GitHub) para garantir que você tenha controle total sobre o que sobe para os ambientes de NP e PROD.
-*   **Merge Request como Garantia**: O fluxo de trabalho deve sempre passar por um Merge Request para revisão entre pares, garantindo a integridade do estado (state).
 
 ---
 
 ## 📁 Estrutura do Projeto
 
-*   `/backend`: Configurações de state remoto para diferentes ambientes (`np.hcl`, `prod.hcl`).
-*   `.github/workflows`: Definições das pipelines de **CI/CD** (`ci-cd-np.yml` e `ci-cd-prod.yml`).
-    *   **CI (Integração Contínua)**: Validação e Plano executados automaticamente.
-    *   **CD (Entrega Contínua)**: Aplicação **manual** da infraestrutura após aprovação no ambiente correspondente.
-*   `network.tf`: Definição da malha de rede.
-*   `storage.tf`: Definição do bucket de estado/armazenamento.
-*   `main.tf`: Configurações globais do provider e versões.
+*   `/backend`: Configurações de state remoto (`np.hcl`, `prod.hcl`).
+*   `.github/workflows`: 
+    *   `terraform-ci.yml`: Validação automática (CI).
+    *   `terraform-cd.yml`: Deploy manual (CD).
+    *   `terraform-destroy.yml`: Destruição manual.
+*   `network.tf`, `storage.tf`: Definições de infraestrutura.
+*   `main.tf`: Configurações globais e versões.
 
 ---
 
 ## 🧹 Limpeza de Recursos
 
-Para evitar custos desnecessários na sua conta AWS após concluir o laboratório, você deve destruir a infraestrutura provisionada.
+Para evitar custos desnecessários na sua conta AWS:
 
-1.  Acesse a aba **Actions** no seu repositório GitHub.
-2.  Selecione a execução mais recente da pipeline correspondente (`Terraform CI/CD - NP` ou `PROD`).
-3.  No grafo de execução, você verá um job chamado **Terraform Destroy** ao final do fluxo.
-4.  Clique em **Review deployments** e aprove o ambiente correspondente (`dev-destroy` ou `prod-destroy`).
-5.  **Atenção**: Este job é opcional e manual. Ele utiliza um ambiente separado para garantir que a aprovação do deploy (Apply) não acione a destruição acidentalmente.
+1.  Acesse a aba **Actions**.
+2.  Selecione o workflow **Terraform - Destroy**.
+3.  Clique em **Run workflow**, escolha o ambiente (`dev` ou `prod`) e confirme.
 
 ---
 
