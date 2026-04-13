@@ -64,6 +64,21 @@ Após entender a mecânica, introduzimos o **GitHub Actions**. Agora, o trabalho
 
 ---
 
+## ⚙️ Configuração Necessária no GitHub
+
+Para que as aprovações manuais funcionem corretamente e o `apply/destroy` não executem sozinhos, você deve configurar os **Environments** no seu repositório:
+
+1.  Acesse **Settings** > **Environments**.
+2.  Crie os seguintes ambientes:
+    *   `dev` e `dev-destroy` (para o ambiente Non-Prod).
+    *   `prod` e `prod-destroy` (para o ambiente Produção).
+3.  Em cada ambiente, ative a opção **Required reviewers** e adicione os usuários aprovadores.
+
+> [!IMPORTANT]
+> Sem essa configuração, o GitHub executará os jobs automaticamente assim que o `plan` for concluído.
+
+---
+
 ## 🌳 Estratégia de Branching (Gitflow)
 
 Para organizar o desenvolvimento e garantir a estabilidade da infraestrutura, utilizamos um fluxo de trabalho baseado em branches:
