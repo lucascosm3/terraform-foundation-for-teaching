@@ -64,6 +64,33 @@ Após entender a mecânica, introduzimos o **GitHub Actions**. Agora, o trabalho
 
 ---
 
+## 🌳 Estratégia de Branching (Gitflow)
+
+Para organizar o desenvolvimento e garantir a estabilidade da infraestrutura, utilizamos um fluxo de trabalho baseado em branches:
+
+1.  **Feature Branches** (`feature/nome-da-mudança`): Onde as novas implementações começam. 
+2.  **Branch `dev`**: 
+    *   Representa o ambiente de **Non-Prod (Desenvolvimento)**.
+    *   **Trigger**: No `push` ou `merge`, a pipeline de NP é acionada.
+3.  **Branch `main`**: 
+    *   Representa o ambiente de **Produção**.
+    *   **Trigger**: Apenas merges aprovados aqui disparam a pipeline de Produção.
+
+### Fluxo de Trabalho (Workflow):
+
+```mermaid
+graph LR
+    A[Feature Branch] -->|Pull Request| B(Branch dev)
+    B -->|Automatic Apply| C[Ambiente NP]
+    B -->|Pull Request| D(Branch main)
+    D -->|Automatic Apply| E[Ambiente PROD]
+```
+
+*   **Validação em PRs**: Ao abrir um Pull Request para `dev` ou `main`, a pipeline executa apenas o `terraform plan`. Isso permite que você revise o que será alterado antes de confirmar o merge.
+*   **Deploy Automático**: O `terraform apply` só ocorre após o merge final na branch correspondente.
+
+---
+
 ## 📁 Estrutura do Projeto
 
 *   `/backend`: Configurações de state remoto para diferentes ambientes (`np.hcl`, `prod.hcl`).
