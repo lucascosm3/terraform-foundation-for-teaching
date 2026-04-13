@@ -86,8 +86,8 @@ graph LR
     D -->|Automatic Apply| E[Ambiente PROD]
 ```
 
-*   **Deploy Direto**: Ao realizar um `push` ou `merge` para as branches `dev` ou `main`, a pipeline correspondente é acionada imediatamente, executando todo o ciclo (Validate, Plan e Apply).
-*   **Atenção**: Como as pipelines não rodam mais em Pull Requests, é recomendável rodar o `terraform plan` localmente antes de realizar o push para garantir que não haverá erros na pipeline.
+*   **A Pipeline é a Autoridade**: A validação (`validate`) e o planejamento (`plan`) da infraestrutura são realizados automaticamente pela pipeline. **Não é necessário e nem recomendado** executar comandos do Terraform localmente para o deploy.
+*   **Merge Request como Garantia**: O fluxo de trabalho deve sempre passar por um Merge Request. Ao realizar o merge para `dev` ou `main`, a pipeline assume a responsabilidade de garantir que o código aprovado seja exatamente o que será provisionado, mantendo a integridade do ambiente e do estado (state).
 
 ---
 
