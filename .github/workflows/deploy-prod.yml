@@ -1,0 +1,55 @@
+name: 'Terraform PROD Deployment'
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    # Este gatilho manual permite executar e escolher se vai aplicar ou não
+    inputs:
+      apply:
+        description: 'Executar Terraform Apply?'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  terraform:
+    name: 'Terraform Workflow - PROD'
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: us-east-1
+        # Usando as credenciais armazenadas nos Secrets do repositório
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      run: terraform init -backend-config=backend/prod.hcl
+
+    - name: Terraform Format Check
+      run: terraform fmt -check || echo "Dica: rode 'terraform fmt' localmente para corrigir o formato"
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Plan
+      # O plan roda em todos os casos (push, pull_request e manual) para mostrar as alterações
+      run: terraform plan -var-file=prod.tfvars -out=tfplan
+
+    - name: Terraform Apply (Manual)
+      # Só executa o apply SE foi acionado via botão manual ("workflow_dispatch") E a opção apply for true
+      if: github.event_name == 'workflow_dispatch' && github.event.inputs.apply == 'true'
+      run: terraform apply -auto-approve tfplan
