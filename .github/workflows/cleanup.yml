@@ -14,7 +14,7 @@ on:
 
 jobs:
   cleanup:
-    name: 'Cleanup - ${{ github.event.inputs.environment }}'
+    name: 'Cleanup AWS Resources - ${{ github.event.inputs.environment }}'
     runs-on: ubuntu-latest
     environment: ${{ github.event.inputs.environment }}-destroy
 
