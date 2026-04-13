@@ -61,7 +61,13 @@ jobs:
       run: terraform init -backend-config=backend/prod.hcl -upgrade
 
     - name: Terraform Plan
-      run: terraform plan -var-file=prod.tfvars
+      run: terraform plan -var-file=prod.tfvars -out=tfplan
+
+    - name: Upload Terraform Plan
+      uses: actions/upload-artifact@v4
+      with:
+        name: tfplan-prod
+        path: tfplan
 
   apply:
     name: 'Terraform Apply - PROD'
@@ -88,5 +94,10 @@ jobs:
     - name: Terraform Init
       run: terraform init -backend-config=backend/prod.hcl -upgrade
 
+    - name: Download Terraform Plan
+      uses: actions/download-artifact@v4
+      with:
+        name: tfplan-prod
+
     - name: Terraform Apply
-      run: terraform apply -var-file=prod.tfvars -auto-approve
+      run: terraform apply tfplan

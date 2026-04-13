@@ -1,9 +1,9 @@
 # VPC with module remote AWS
-module "vpc_np_module_remote_aws" {
+module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
 
-  name = "vpc-np-module-remote-aws-${var.environment}"
+  name = "vpc-${var.environment}"
   cidr = "10.0.0.0/16"
 
   azs             = ["us-east-1a"]
