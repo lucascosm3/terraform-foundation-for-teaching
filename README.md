@@ -94,7 +94,9 @@ graph LR
 ## 📁 Estrutura do Projeto
 
 *   `/backend`: Configurações de state remoto para diferentes ambientes (`np.hcl`, `prod.hcl`).
-*   `.github/workflows`: Definições das pipelines de automatização.
+*   `.github/workflows`: Definições das pipelines de **CI/CD** (`ci-cd-np.yml` e `ci-cd-prod.yml`).
+    *   **CI (Integração Contínua)**: Validação e Plano executados em Pull Requests.
+    *   **CD (Entrega Contínua)**: Aplicação automática da infraestrutura após o merge.
 *   `network.tf`: Definição da malha de rede.
 *   `storage.tf`: Definição do bucket de estado/armazenamento.
 *   `main.tf`: Configurações globais do provider e versões.
