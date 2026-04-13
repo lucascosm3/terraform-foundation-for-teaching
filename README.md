@@ -52,42 +52,39 @@ terraform apply -var-file="dev.tfvars"
 
 ### 2. Etapa Automatizada (O "Plus" com Pipelines)
 
-Após entender a mecânica, introduzimos o **GitHub Actions**. O trabalho agora é dividido em três responsabilidades claras:
+Após entender a mecânica, introduzimos o **GitHub Actions**. O trabalho agora é consolidado em pipelines que cuidam de todo o ciclo de vida por ambiente:
 
-*   **🔍 CI (Integração Contínua)**: Validação automática do código (`fmt`, `validate` e `plan`) a cada push.
-*   **🚀 CD (Entrega Contínua)**: Deploy manual (`apply`) através de um botão no GitHub, permitindo total controle sobre quando a infraestrutura muda.
-*   **🧹 Cleanup (Limpeza)**: Destruição manual e isolada dos recursos quando o laboratório termina.
+*   **🔍 Validação e Plano**: Automáticos a cada push, garantindo feedback imediato.
+*   **🚀 Opções Manuais**: Após o plano, você decide o próximo passo: **Aplicar** as mudanças ou **Destruir** os recursos para limpeza.
 
 ---
 
 ## ⚙️ Configuração Necessária no GitHub
 
-Para que as aprovações manuais funcionem corretamente e você tenha os botões de controle, configure os **Environments** no seu repositório:
+Para que as paradas manuais funcionem corretamente, você deve configurar os **Environments** no seu repositório:
 
 1.  Acesse **Settings** > **Environments**.
 2.  Crie os seguintes ambientes:
-    *   `dev` e `dev-destroy` (para o ambiente Non-Prod).
-    *   `prod` e `prod-destroy` (para o ambiente Produção).
-3.  Em cada ambiente, ative a opção **Required reviewers** e adicione os usuários aprovadores.
+    *   `dev` e `dev-destroy` (ambiente Non-Prod).
+    *   `prod` e `prod-destroy` (ambiente Produção).
+3.  Em cada ambiente, ative a opção **Required reviewers**.
 
 ---
 
 ## 🌳 Estratégia de Branching (Gitflow)
 
 1.  **Feature Branches**: Onde as novas implementações começam. 
-2.  **Branch `dev`**: Representa o ambiente de **Desenvolvimento**. O `push` aqui dispara o **CI de NP**.
-3.  **Branch `main`**: Representa o ambiente de **Produção**. O `merge` aqui dispara o **CI de Produção**.
+2.  **Branch `dev`**: Representa o ambiente de **Desenvolvimento**. O `push` aqui dispara a pipeline de NP.
+3.  **Branch `main`**: Representa o ambiente de **Produção**. O `merge` aqui dispara a pipeline de Produção.
 
 ### Fluxo de Trabalho (Workflow):
 
 ```mermaid
-graph TD
-    A[Push/Merge] --> B{Pipeline de CI}
-    B -->|Automático| C[Validate & Plan]
-    C --> D[Reviewer do Plano]
-    D --> E{Decisão do Aluno}
-    E -->|Manual: Deploy| F[Workflow de CD]
-    E -->|Manual: Limpar| G[Workflow de Destroy]
+graph LR
+    A[Push/Merge] --> B(Validate)
+    B --> C(Plan)
+    C -.->|Opção Manual| D[Apply]
+    C -.->|Opção Manual| E[Destroy]
 ```
 
 ---
@@ -96,9 +93,8 @@ graph TD
 
 *   `/backend`: Configurações de state remoto (`np.hcl`, `prod.hcl`).
 *   `.github/workflows`: 
-    *   `terraform-ci.yml`: Validação automática (CI).
-    *   `terraform-cd.yml`: Deploy manual (CD).
-    *   `terraform-destroy.yml`: Destruição manual.
+    *   `ci-cd-np.yml`: Pipeline completa para o ambiente de Desenvolvimento.
+    *   `ci-cd-prod.yml`: Pipeline completa para o ambiente de Produção.
 *   `network.tf`, `storage.tf`: Definições de infraestrutura.
 *   `main.tf`: Configurações globais e versões.
 
@@ -109,8 +105,9 @@ graph TD
 Para evitar custos desnecessários na sua conta AWS:
 
 1.  Acesse a aba **Actions**.
-2.  Selecione o workflow **Terraform - Destroy**.
-3.  Clique em **Run workflow**, escolha o ambiente (`dev` ou `prod`) e confirme.
+2.  Selecione a execução mais recente da pipeline do ambiente que deseja limpar.
+3.  No grafo de execução, localize o job **Terraform Destroy** ao final do fluxo.
+4.  Clique em **Review deployments**, selecione o ambiente de limpeza (`-destroy`) e aprove.
 
 ---
 
