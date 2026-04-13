@@ -105,10 +105,10 @@ jobs:
   destroy:
     name: 'Terraform Destroy - NP'
     runs-on: ubuntu-latest
-    needs: [apply]
+    needs: [plan]
     # Usamos um ambiente separado para que a aprovação do 'apply' não libere o 'destroy'
     environment: dev-destroy
-    if: always() && !cancelled() && github.ref == 'refs/heads/dev' && github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/dev' && github.event_name != 'pull_request'
 
     steps:
     - name: Checkout repository

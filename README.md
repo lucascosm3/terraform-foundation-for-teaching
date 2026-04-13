@@ -82,13 +82,16 @@ Para organizar o desenvolvimento e garantir a estabilidade da infraestrutura, ut
 graph LR
     A[Feature Branch] -->|Push/Merge| B(Branch dev)
     B -->|Plan/Validate| B
-    B -.->|Manual Approval/Apply| C[Ambiente NP]
+    B -.->|Manual Option: Apply| C[Ambiente NP]
+    B -.->|Manual Option: Destroy| F[Limpeza NP]
     B -->|Merge main| D(Branch main)
     D -->|Plan/Validate| D
-    D -.->|Manual Approval/Apply| E[Ambiente PROD]
+    D -.->|Manual Option: Apply| E[Ambiente PROD]
+    D -.->|Manual Option: Destroy| G[Limpeza PROD]
 ```
 
 *   **A Pipeline é a Autoridade**: A validação (`validate`) e o planejamento (`plan`) da infraestrutura são realizados automaticamente pela pipeline ao detectar um push ou merge.
+*   **Escolha sua Ação (Apply ou Destroy)**: Após o planejamento, você tem duas opções independentes e manuais. Você pode escolher **Aplicar** as mudanças ou **Destruir** o que já existe.
 *   **Apply Manual para Controle Total**: O `terraform apply` **não acontece automaticamente**. Ele exige uma aprovação manual (clique no botão de aprovação no GitHub) para garantir que você tenha controle total sobre o que sobe para os ambientes de NP e PROD.
 *   **Merge Request como Garantia**: O fluxo de trabalho deve sempre passar por um Merge Request para revisão entre pares, garantindo a integridade do estado (state).
 
