@@ -106,6 +106,18 @@ graph LR
 
 ---
 
+## 🧹 Limpeza de Recursos
+
+Para evitar custos desnecessários na sua conta AWS após concluir o laboratório, você deve destruir a infraestrutura provisionada.
+
+1.  Acesse a aba **Actions** no seu repositório GitHub.
+2.  Selecione a execução mais recente da pipeline correspondente (`Terraform CI/CD - NP` ou `PROD`).
+3.  No grafo de execução, você verá um job chamado **Terraform Destroy** aguardando aprovação.
+4.  Clique em **Review deployments** e aprove para executar a limpeza.
+5.  **Atenção**: Este job é opcional e manual. Ele garante que os recursos sejam removidos apenas quando você desejar encerrar o laboratório.
+
+---
+
 ## 📜 Licença
 
 Consulte o arquivo [LICENSE](./LICENSE) para mais detalhes.
