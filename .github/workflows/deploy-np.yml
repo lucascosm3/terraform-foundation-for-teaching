@@ -40,7 +40,8 @@ jobs:
       run: terraform init -backend-config=backend/np.hcl
 
     - name: Terraform Format Check
-      run: terraform fmt -check || echo "Dica: rode 'terraform fmt' localmente para corrigir o formato"
+      run: |
+        terraform fmt -check || echo "Dica: rode 'terraform fmt' localmente para corrigir o formato"
 
     - name: Terraform Validate
       run: terraform validate
