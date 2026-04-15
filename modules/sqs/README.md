@@ -9,7 +9,7 @@ Terraform module that creates an Amazon SQS queue with a required Dead Letter Qu
 - Configurable redrive policy (`max_receive_count`)
 - SSE-SQS encryption enabled by default
 - Input validation on all critical variables
-- Consistent naming: `{name}-{environment}` (FIFO queues get `.fifo` suffix)
+- Consistent naming: uses `{name}` as provided (FIFO queues get `.fifo` suffix). Pass `name = "myqueue-{env}"` to include environment
 - Tag propagation with `Environment` and `Module-Source` defaults
 
 ## Usage
@@ -20,7 +20,7 @@ Terraform module that creates an Amazon SQS queue with a required Dead Letter Qu
 module "sqs" {
   source = "./modules/sqs"
 
-  name        = "order-events"
+  name        = "order-events-${var.environment}"
   environment = var.environment
 
   tags = local.common_tags
@@ -33,7 +33,7 @@ module "sqs" {
 module "sqs" {
   source = "./modules/sqs"
 
-  name                        = "order-events"
+  name                        = "order-events-${var.environment}"
   environment                 = var.environment
   fifo_queue                  = true
   content_based_deduplication = true
@@ -48,7 +48,7 @@ module "sqs" {
 module "sqs" {
   source = "git::https://github.com/USER/terraform-foundation-for-teaching.git//modules/sqs?ref=v1.0.0"
 
-  name        = "order-events"
+  name        = "order-events-${var.environment}"
   environment = var.environment
 }
 ```

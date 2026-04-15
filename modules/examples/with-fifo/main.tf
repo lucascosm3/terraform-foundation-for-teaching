@@ -5,7 +5,7 @@ provider "aws" {
 module "sqs" {
   source = "../../modules/sqs"
 
-  name        = "order-events"
+  name        = "order-events-np"
   environment = "np"
 
   fifo_queue                  = true
@@ -19,7 +19,7 @@ module "sqs" {
 module "eventbridge" {
   source = "../../modules/eventbridge"
 
-  name           = "order-events"
+  name           = "order-events-np"
   environment    = "np"
   event_pattern  = jsonencode({
     source      = ["my.custom.source"]

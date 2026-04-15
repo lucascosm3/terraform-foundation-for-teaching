@@ -19,14 +19,14 @@ Terraform module that creates an Amazon EventBridge Rule targeting an SQS queue,
 module "sqs" {
   source = "./modules/sqs"
 
-  name        = "order-events"
+  name        = "order-events-${var.environment}"
   environment = var.environment
 }
 
 module "eventbridge" {
   source = "./modules/eventbridge"
 
-  name           = "order-events"
+  name           = "order-events-${var.environment}"
   environment    = var.environment
   event_pattern  = jsonencode({
     source      = ["my.custom.source"]
@@ -47,14 +47,14 @@ resource "aws_cloudwatch_event_bus" "custom" {
 module "sqs" {
   source = "./modules/sqs"
 
-  name        = "order-events"
+  name        = "order-events-${var.environment}"
   environment = var.environment
 }
 
 module "eventbridge" {
   source = "./modules/eventbridge"
 
-  name           = "order-events"
+  name           = "order-events-${var.environment}"
   environment    = var.environment
   event_bus_name = aws_cloudwatch_event_bus.custom.name
   event_pattern  = jsonencode({
@@ -72,7 +72,7 @@ module "eventbridge" {
 module "eventbridge" {
   source = "git::https://github.com/USER/terraform-foundation-for-teaching.git//modules/eventbridge?ref=v1.0.0"
 
-  name           = "order-events"
+  name           = "order-events-${var.environment}"
   environment    = var.environment
   event_pattern  = jsonencode({ ... })
   sqs_queue_arn  = module.sqs.sqs_queue_arn
@@ -90,7 +90,7 @@ module "eventbridge" {
 | sqs_queue_arn | ARN of the target SQS queue (from the sqs module) | `string` | - | yes |
 | sqs_queue_url | URL of the target SQS queue (from the sqs module) | `string` | - | yes |
 | event_bus_name | Event Bus name (use 'default' for the default bus) | `string` | `"default"` | no |
-| target_id | Custom target ID (defaults to '{name}-target-{environment}') | `string` | `""` | no |
+| target_id | Custom target ID (defaults to '{name}-target') | `string` | `""` | no |
 | description | Description for the EventBridge Rule | `string` | `""` | no |
 | tags | Additional tags to merge into all resources | `map(string)` | `{}` | no |
 
