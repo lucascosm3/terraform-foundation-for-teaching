@@ -9,7 +9,7 @@ resource "aws_cloudwatch_event_bus" "custom" {
 module "sqs" {
   source = "../../modules/sqs"
 
-  name        = "order-events"
+  name        = "order-events-np"
   environment = "np"
 
   tags = {
@@ -20,7 +20,7 @@ module "sqs" {
 module "eventbridge" {
   source = "../../modules/eventbridge"
 
-  name           = "order-events"
+  name           = "order-events-np"
   environment    = "np"
   event_bus_name = aws_cloudwatch_event_bus.custom.name
   event_pattern  = jsonencode({

@@ -7,12 +7,12 @@ locals {
     },
     var.tags,
   )
-  effective_target_id = var.target_id != "" ? var.target_id : "${var.name}-target-${var.environment}"
-  rule_description     = var.description != "" ? var.description : "Routes events to SQS queue for ${var.name}-${var.environment}"
+  effective_target_id = var.target_id != "" ? var.target_id : "${var.name}-target"
+  rule_description     = var.description != "" ? var.description : "Routes events to SQS queue for ${var.name}"
 }
 
 resource "aws_cloudwatch_event_rule" "this" {
-  name           = "${var.name}-rule-${var.environment}"
+  name           = "${var.name}-rule"
   description    = local.rule_description
   event_bus_name = var.event_bus_name
   event_pattern  = var.event_pattern

@@ -1,6 +1,6 @@
 locals {
-  name_suffix = var.fifo_queue ? "${var.name}-${var.environment}.fifo" : "${var.name}-${var.environment}"
-  dlq_name    = var.fifo_queue ? "${var.name}-dlq-${var.environment}.fifo" : "${var.name}-dlq-${var.environment}"
+  name_suffix = var.fifo_queue ? "${var.name}.fifo" : var.name
+  dlq_name    = var.fifo_queue ? "${var.name}-dlq.fifo" : "${var.name}-dlq"
   merged_tags = merge(
     {
       "Managed-By"    = "iac"
