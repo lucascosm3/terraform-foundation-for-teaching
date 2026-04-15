@@ -1,0 +1,23 @@
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.96.1
+    hooks:
+      - id: terraform_fmt
+        name: Terraform fmt
+        description: Checks that Terraform files are formatted.
+      - id: terraform_validate
+        name: Terraform validate
+        description: Validates Terraform files.
+      - id: terraform_tflint
+        name: Terraform tflint
+        description: Runs tflint on Terraform files.
+        args:
+          - --args=--call-module-type=all
+      - id: terraform_trivy
+        name: Terraform trivy
+        description: Runs trivy security scan on Terraform files.
+      - id: terraform_checkov
+        name: Terraform checkov
+        description: Runs checkov security scan on Terraform files.
+        args:
+          - --args=--skip-check CKV_TF_1
